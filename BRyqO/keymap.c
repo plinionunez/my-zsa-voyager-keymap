@@ -136,9 +136,9 @@ bool rgb_matrix_indicators_user(void) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  if (!process_achordion(keycode, record)) {
-    return false;
-  }
+  // if (!process_achordion(keycode, record)) {
+  //   return false;
+  // }
   switch (keycode) {
     case MAC_LOCK:
       HCS(0x19E);

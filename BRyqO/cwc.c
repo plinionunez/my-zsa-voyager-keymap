@@ -1,3 +1,29 @@
+// bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
+//                       uint16_t other_keycode, keyrecord_t* other_record) {
+//   // Exceptionally consider the following chords as holds, even though they
+//   // are on the same hand in Dvorak.
+//   switch (tap_hold_keycode) {
+//     case MT(MOD_LGUI, KC_D):
+//       if (other_keycode == KC_TAB) { return true; }
+//       if (other_keycode == KC_Z) { return true; }
+//       if (other_keycode == KC_R) { return true; }
+//       if (other_keycode == KC_T) { return true; }
+//       if (other_keycode == KC_W) { return true; }
+//       break;
+//     case MT(MOD_RSFT, KC_J):
+//       if (other_keycode == MT(MOD_RCTL, KC_SCLN)) { return true; }
+//       break;
+//   }
+// 
+//   // Also allow same-hand holds when the other key is in the rows below the
+//   // alphas. I need the `% (MATRIX_ROWS / 2)` because my keyboard is split.
+//   // if (tap_hold_record->event.key.row % (MATRIX_ROWS / 2) >= 5) { return true; }
+// 
+//   // Otherwise defer to the opposite hands rule.
+//   return get_chordal_hold_default(tap_hold_record, other_record);
+// }
+
+/*
 #include "features/achordion.h"
 
 void matrix_scan_user(void) {
@@ -68,3 +94,4 @@ uint16_t achordion_streak_chord_timeout(
     return 100;  // A longer timeout otherwise.
   }
 }
+*/
