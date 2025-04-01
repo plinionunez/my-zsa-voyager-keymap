@@ -1,5 +1,6 @@
+#define CHORDAL_HOLD
 #undef TAPPING_TERM
-#define TAPPING_TERM 170
+#define TAPPING_TERM 250
 
 #define PERMISSIVE_HOLD
 
@@ -7,7 +8,7 @@
 #define RGB_MATRIX_TIMEOUT 600000
 
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define SERIAL_NUMBER "BRyqO/v66ajQ"
+#define SERIAL_NUMBER "BRyqO/Jawo4m"
 #define LAYER_STATE_8BIT
 #define HCS(report) host_consumer_send(record->event.pressed ? report : 0); return false
 
