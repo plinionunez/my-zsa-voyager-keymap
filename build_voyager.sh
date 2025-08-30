@@ -130,22 +130,23 @@ QMK_DIR_LOCAL="${WORKROOT}/qmk_firmware"
 BUILD_CACHE_DIR="${WORKROOT}/.qmk_build_cache"
 mkdir -p "$BUILD_CACHE_DIR"
 
-if [[ -z "$QMK_DIR" ]]; then
-  # Use local qmk_firmware submodule if it exists. The .git check handles
-  # the case where it's a submodule (file) or a full repo (directory).
-  if [[ -e "$QMK_DIR_LOCAL/.git" ]]; then
-    echo "▶ Using local qmk_firmware submodule."
-    QMK_DIR="$QMK_DIR_LOCAL"
-  else
-    QMK_DIR="$TMPDIR_LOCAL/qmk_firmware"
-    echo "▶ Cloning zsa/qmk_firmware @ firmware${QMK_VERSION_MAJOR} ..."
-    if ! git clone --depth 1 --branch "firmware${QMK_VERSION_MAJOR}" https://github.com/zsa/qmk_firmware.git "$QMK_DIR" 2>/dev/null; then
-      git clone --depth 1 https://github.com/zsa/qmk_firmware.git "$QMK_DIR"
-      git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
-      git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
-    fi
-  fi
-fi
+QMK_DIR="$QMK_DIR_LOCAL"
+# if [[ -z "$QMK_DIR" ]]; then
+#   # Use local qmk_firmware submodule if it exists. The .git check handles
+#   # the case where it's a submodule (file) or a full repo (directory).
+#   if [[ -e "$QMK_DIR_LOCAL/.git" ]]; then
+#     echo "▶ Using local qmk_firmware submodule."
+#     QMK_DIR="$QMK_DIR_LOCAL"
+#   else
+#     QMK_DIR="$TMPDIR_LOCAL/qmk_firmware"
+#     echo "▶ Cloning zsa/qmk_firmware @ firmware${QMK_VERSION_MAJOR} ..."
+#     if ! git clone --depth 1 --branch "firmware${QMK_VERSION_MAJOR}" https://github.com/zsa/qmk_firmware.git "$QMK_DIR" 2>/dev/null; then
+#       git clone --depth 1 https://github.com/zsa/qmk_firmware.git "$QMK_DIR"
+#       git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
+#       git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
+#     fi
+#   fi
+# fi
 
 echo "▶ Preparing QMK repository in $QMK_DIR ..."
 # The .git check handles the case where it's a submodule (file) or a full repo (directory).
