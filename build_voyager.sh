@@ -131,7 +131,9 @@ BUILD_CACHE_DIR="${WORKROOT}/.qmk_build_cache"
 mkdir -p "$BUILD_CACHE_DIR"
 
 if [[ -z "$QMK_DIR" ]]; then
-  if [[ -d "$QMK_DIR_LOCAL/.git" ]]; then
+  # Use local qmk_firmware submodule if it exists. The .git check handles
+  # the case where it's a submodule (file) or a full repo (directory).
+  if [[ -e "$QMK_DIR_LOCAL/.git" ]]; then
     echo "▶ Using local qmk_firmware submodule."
     QMK_DIR="$QMK_DIR_LOCAL"
   else
@@ -146,7 +148,8 @@ if [[ -z "$QMK_DIR" ]]; then
 fi
 
 echo "▶ Preparing QMK repository in $QMK_DIR ..."
-[[ -d "$QMK_DIR/.git" ]] || die "QMK_DIR is not a git repo: $QMK_DIR"
+# The .git check handles the case where it's a submodule (file) or a full repo (directory).
+[[ -e "$QMK_DIR/.git" ]] || die "QMK_DIR is not a git repo: $QMK_DIR"
 git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
 git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
 git -C "$QMK_DIR" submodule update --init --recursive --depth=1
