@@ -3,6 +3,20 @@
 
 set -euo pipefail
 
+# --- Error handling ---
+ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+cleanup_on_error() {
+    local exit_code=$?
+    echo "✖︎ Script failed. Cleaning up git state..." >&2
+    # Force checkout to original branch, discarding any uncommitted changes from this script
+    git checkout -f "$ORIGINAL_BRANCH" >/dev/null 2>&1
+    echo "ℹ︎ Reverted to original branch '$ORIGINAL_BRANCH'." >&2
+    # Note: Commits made to 'oryx' branch are not removed to prevent data loss.
+    exit $exit_code
+}
+trap cleanup_on_error ERR
+# --- End of error handling ---
+
 LAYOUT_ID="BRyqO"
 GEOMETRY="voyager"
 QMK_DIR=""
@@ -52,7 +66,7 @@ while [[ $# -gt 0 ]]; do
     print_help
     exit 0
     ;;
-  *) die "Unknown argument: $1" ;;
+  *) die "Unknown argument: $1" ;; 
   esac
 done
 
@@ -65,12 +79,11 @@ cleanup() { [[ $KEEP_TMP -eq 0 ]] && rm -rf "$TMPDIR_LOCAL" || echo "ℹ︎ Temp
 trap cleanup EXIT
 mkdir -p "$OUT_DIR"
 
+echo "▶ Checking out oryx branch..."
+git checkout oryx || die "Could not checkout oryx branch. Please create it."
+
 echo "▶ Fetching Oryx layout info for ${LAYOUT_ID} (${GEOMETRY}) ..."
-GRAPHQL_PAYLOAD=$(
-  cat <<'JSON'
-{"query":"query getLayout($hashId: String!, $revisionId: String!, $geometry: String) {layout(hashId: $hashId, geometry: $geometry, revisionId: $revisionId) {  revision { hashId, qmkVersion, title }}}","variables":{"hashId":"__HASH__","geometry":"__GEOM__","revisionId":"latest"}}
-JSON
-)
+GRAPHQL_PAYLOAD='{"query":"query getLayout($hashId: String!, $revisionId: String!, $geometry: String) {layout(hashId: $hashId, geometry: $geometry, revisionId: $revisionId) {  revision { hashId, qmkVersion, title }}}","variables":{"hashId":"__HASH__","geometry":"__GEOM__","revisionId":"latest"}}'
 GRAPHQL_PAYLOAD="${GRAPHQL_PAYLOAD/__HASH__/$LAYOUT_ID}"
 GRAPHQL_PAYLOAD="${GRAPHQL_PAYLOAD/__GEOM__/$GEOMETRY}"
 
@@ -93,9 +106,24 @@ echo "  • Title: $CHANGE_DESC"
 echo "▶ Downloading & flattening Oryx source ..."
 SRC_ZIP="$TMPDIR_LOCAL/source.zip"
 curl -sSL --compressed "https://oryx.zsa.io/source/${HASH_ID}" -o "$SRC_ZIP" || die "Download source failed"
-# IMPORTANT: -j to junk internal paths so files land directly under $TMPDIR_LOCAL/$LAYOUT_ID
-unzip -oqj "$SRC_ZIP" "*_source/*" -d "$TMPDIR_LOCAL/$LAYOUT_ID"
+
+LAYOUT_SRC_DIR="${WORKROOT}/${LAYOUT_ID}"
+echo "▶ Updating local source in ${LAYOUT_SRC_DIR} ..."
+# IMPORTANT: -j to junk internal paths so files land directly under $LAYOUT_SRC_DIR
+unzip -oqj "$SRC_ZIP" "*_source/*" -d "$LAYOUT_SRC_DIR"
 rm -f "$SRC_ZIP"
+
+echo "▶ Committing Oryx source changes ..."
+git add "${LAYOUT_SRC_DIR}"
+if ! git diff --staged --quiet; then
+    git commit -m "feat(oryx): ${CHANGE_DESC}" -m "Oryx revision: ${HASH_ID}"
+else
+    echo "  • No changes to commit."
+fi
+
+echo "▶ Merging oryx branch into main ..."
+git checkout main
+git merge oryx --no-ff -m "Merge branch 'oryx' with keymap update from ZSA Oryx (${HASH_ID})"
 
 # Prepare QMK
 if [[ -z "$QMK_DIR" ]]; then
@@ -128,7 +156,7 @@ KEYMAP_DST="$KBD_DIR/${GEOMETRY}/keymaps/${LAYOUT_ID}"
 rm -rf "$KEYMAP_DST"
 mkdir -p "$KEYMAP_DST"
 # Copy CONTENTS (including dotfiles) directly into the keymap folder
-cp -R "$TMPDIR_LOCAL/$LAYOUT_ID"/. "$KEYMAP_DST/"
+cp -R "${LAYOUT_SRC_DIR}"/. "$KEYMAP_DST/"
 
 # Sanity check (this is what QMK looks for)
 [[ -f "$KEYMAP_DST/keymap.c" || -f "$KEYMAP_DST/keymap.json" ]] || die "Keymap missing keymap.c/json at $KEYMAP_DST"
@@ -140,14 +168,14 @@ docker pull "$DOCKER_IMAGE" >/dev/null
 HOST_CPUS=$(sysctl -n hw.ncpu 2>/dev/null || echo 2)
 echo "▶ Verifying keymap path inside container:"
 docker run --rm -v "$QMK_DIR:/src" "$DOCKER_IMAGE" /bin/sh -lc \
-  'ls -la "/src/'"keyboards/${MAKE_PREFIX}../${GEOMETRY}/keymaps/${LAYOUT_ID}"'" 2>/dev/null || true'
+  'ls -la "/src/keyboards/${MAKE_PREFIX}../${GEOMETRY}/keymaps/${LAYOUT_ID}" 2>/dev/null || true'
 echo "▶ Building: make ${MAKE_PREFIX}${GEOMETRY}:${LAYOUT_ID} (-j${HOST_CPUS})"
 docker run --rm \
   -v "$QMK_DIR:/src" \
   "$DOCKER_IMAGE" /bin/sh -lc "make -C /src -j${HOST_CPUS} ${MAKE_PREFIX}${GEOMETRY}:${LAYOUT_ID}"
 
 echo "▶ Locating artifact ..."
-NORMALIZED_GEOM="${GEOMETRY//\//_}"
+NORMALIZED_GEOM="${GEOMETRY//\/\_}"
 ARTIFACT=$(find "$QMK_DIR" -type f \( -name "*${NORMALIZED_GEOM}*.bin" -o -name "*${NORMALIZED_GEOM}*.hex" \) -print0 |
   xargs -0 ls -t 2>/dev/null | head -n1 || true)
 if [[ -z "$ARTIFACT" ]]; then
