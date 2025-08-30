@@ -6,13 +6,13 @@ set -euo pipefail
 # --- Error handling ---
 ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 cleanup_on_error() {
-    local exit_code=$?
-    echo "✖︎ Script failed. Cleaning up git state..." >&2
-    # Force checkout to original branch, discarding any uncommitted changes from this script
-    git checkout -f "$ORIGINAL_BRANCH" >/dev/null 2>&1
-    echo "ℹ︎ Reverted to original branch '$ORIGINAL_BRANCH'." >&2
-    # Note: Commits made to 'oryx' branch are not removed to prevent data loss.
-    exit $exit_code
+  local exit_code=$?
+  echo "✖︎ Script failed. Cleaning up git state..." >&2
+  # Force checkout to original branch, discarding any uncommitted changes from this script
+  git checkout -f "$ORIGINAL_BRANCH" >/dev/null 2>&1
+  echo "ℹ︎ Reverted to original branch '$ORIGINAL_BRANCH'." >&2
+  # Note: Commits made to 'oryx' branch are not removed to prevent data loss.
+  exit $exit_code
 }
 trap cleanup_on_error ERR
 # --- End of error handling ---
@@ -66,7 +66,7 @@ while [[ $# -gt 0 ]]; do
     print_help
     exit 0
     ;;
-  *) die "Unknown argument: $1" ;; 
+  *) die "Unknown argument: $1" ;;
   esac
 done
 
@@ -116,9 +116,9 @@ rm -f "$SRC_ZIP"
 echo "▶ Committing Oryx source changes ..."
 git add "${LAYOUT_SRC_DIR}"
 if ! git diff --staged --quiet; then
-    git commit -m "feat(oryx): ${CHANGE_DESC}" -m "Oryx revision: ${HASH_ID}"
+  git commit -m "feat(oryx): ${CHANGE_DESC}" -m "Oryx revision: ${HASH_ID}"
 else
-    echo "  • No changes to commit."
+  echo "  • No changes to commit."
 fi
 
 echo "▶ Merging oryx branch into main ..."
@@ -150,9 +150,9 @@ fi
 echo "▶ Preparing QMK repository in $QMK_DIR ..."
 # The .git check handles the case where it's a submodule (file) or a full repo (directory).
 [[ -e "$QMK_DIR/.git" ]] || die "QMK_DIR is not a git repo: $QMK_DIR"
-git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
-git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
-git -C "$QMK_DIR" submodule update --init --recursive --depth=1
+# git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
+# git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
+# git -C "$QMK_DIR" submodule update --init --recursive --depth=1
 
 if [[ "$QMK_VERSION_MAJOR" -ge 24 ]]; then
   KBD_DIR="$QMK_DIR/keyboards/zsa"
@@ -186,9 +186,8 @@ docker run --rm \
   -v "$BUILD_CACHE_DIR:/src/.build" \
   "$DOCKER_IMAGE" /bin/sh -lc "make -C /src -j${HOST_CPUS} ${MAKE_PREFIX}${GEOMETRY}:${LAYOUT_ID}"
 
-
 echo "▶ Locating artifact ..."
-NORMALIZED_GEOM="${GEOMETRY//\/\_}"
+NORMALIZED_GEOM="${GEOMETRY//\/\_/}"
 ARTIFACT=$(find "$QMK_DIR" -type f \( -name "*${NORMALIZED_GEOM}*.bin" -o -name "*${NORMALIZED_GEOM}*.hex" \) -print0 |
   xargs -0 ls -t 2>/dev/null | head -n1 || true)
 if [[ -z "$ARTIFACT" ]]; then

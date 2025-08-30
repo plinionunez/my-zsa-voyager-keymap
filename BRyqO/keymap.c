@@ -1,6 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "version.h"
-// #include "cwc.c"
+#include "cwc.c"
 #define MOON_LED_LEVEL LED_LEVEL
 #ifndef ZSA_SAFE_RANGE
 #define ZSA_SAFE_RANGE SAFE_RANGE
@@ -20,7 +20,7 @@ enum custom_keycodes {
 
 
 
-const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] __attribute__((unused)) = {
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_voyager(
     OSM(MOD_HYPR),  KC_1,           KC_2,           KC_3,           KC_4,           KC_5,                                           KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,       
     KC_TAB,         KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,                                           KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLS,        
@@ -31,7 +31,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] __attribute__((unused
   [1] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TO(5),          
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LGUI(KC_A),     LGUI(KC_S),     OSM(MOD_HYPR),                                  RGUI(KC_LEFT),  RALT(KC_LEFT),  RALT(KC_RIGHT), RGUI(KC_RIGHT), RALT(RSFT(KC_KP_PLUS)),TO(3),          
-    CW_TOGG,        LGUI(KC_LBRC),  LGUI(KC_RBRC),  RGUI(RSFT(KC_LBRC)),RGUI(RSFT(KC_RBRC)),OSM(MOD_MEH),                                   KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       RALT(RSFT(KC_KP_MINUS)),TO(6),          
+    CW_TOGG,        LGUI(KC_LBRC),  LGUI(KC_RBRC),  RGUI(RSFT(KC_LBRC)),RGUI(RSFT(KC_RBRC)),OSM(MOD_MEH),                                   KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       RALT(RSFT(KC_KP_MINUS)),KC_TRANSPARENT, 
     LGUI(LSFT(KC_X)),LGUI(KC_Z),     LGUI(KC_X),     LGUI(KC_C),     LGUI(KC_V),     KC_LEFT_SHIFT,                                  RGUI(RSFT(KC_LBRC)),RGUI(RSFT(KC_RBRC)),LGUI(KC_LBRC),  LGUI(KC_RBRC),  KC_TRANSPARENT, LGUI(KC_ENTER), 
                                                     LCTL(KC_GRAVE), KC_TRANSPARENT,                                 LGUI(KC_GRAVE), LALT(KC_BSPC)
   ),
@@ -65,23 +65,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] __attribute__((unused
   ),
   [6] = LAYOUT_voyager(
     NAVIGATOR_DEC_CPI,NAVIGATOR_INC_CPI,KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, QK_LLCK,                                        KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TOGGLE_SCROLL,                                  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_BTN3,     KC_MS_BTN2,     KC_MS_BTN1,     DRAG_SCROLL,                                    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, NAVIGATOR_AIM,                                  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TO(0),          
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_BTN3,     TOGGLE_SCROLL,                                  KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_BTN2,     KC_MS_BTN1,     DRAG_SCROLL,                                    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
+    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, 
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT
   ),
 };
 
-const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM __attribute__((unused)) = LAYOUT(
-  'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R', 
-  'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R', 
-  'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R', 
-  '*', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R', 
-  'L', 'L', 'R', 'R'
-);
+/* const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT( */
+/*   'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R', */ 
+/*   'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R', */ 
+/*   'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R', */ 
+/*   'L', 'L', 'L', 'L', 'L', 'L', 'R', 'R', 'R', 'R', 'R', 'R', */ 
+/*   'L', 'L', 'R', 'R' */
+/* ); */
 
 
-uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) __attribute__((unused));
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case MT(MOD_LCTL, KC_ESCAPE):
@@ -110,17 +109,16 @@ RGB hsv_to_rgb_with_value(HSV hsv) {
   return (RGB){ f * rgb.r, f * rgb.g, f * rgb.b };
 }
 
-void keyboard_post_init_user(void) __attribute__((unused));
 void keyboard_post_init_user(void) {
   rgb_matrix_enable();
 }
 
-const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] __attribute__((unused)) = {
+const uint8_t PROGMEM ledmap[][RGB_MATRIX_LED_COUNT][3] = {
     [3] = { {16,231,230}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {170,151,242}, {170,151,242}, {170,70,166}, {170,70,166}, {170,70,166}, {0,0,0}, {41,227,246}, {41,227,246}, {41,227,246}, {170,70,166}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {170,70,166}, {170,70,166}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {140,153,103}, {248,226,224}, {248,226,224}, {248,226,224}, {0,0,0}, {176,208,182}, {140,153,103}, {248,226,224}, {248,226,224}, {248,226,224}, {0,0,0}, {176,208,182}, {140,153,103}, {248,226,224}, {248,226,224}, {248,226,224}, {140,153,103}, {176,208,182}, {0,0,0}, {248,226,224} },
 
     [4] = { {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {170,70,166}, {0,0,0}, {0,0,0}, {140,195,56}, {0,0,0}, {170,70,166}, {170,70,166}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {169,146,210}, {139,76,134}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {139,156,98}, {0,0,0}, {0,0,0}, {170,70,166}, {170,70,166}, {0,0,0}, {170,70,166}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {170,70,166}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
-    [5] = { {176,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {0,0,0}, {139,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {139,208,182}, {139,208,182}, {139,208,182}, {0,0,0}, {0,0,0}, {176,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
+    [5] = { {176,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {0,0,0}, {139,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {139,208,182}, {139,208,182}, {139,208,182}, {0,0,0}, {0,0,0}, {176,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {176,208,182}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0} },
 
 };
 
@@ -140,7 +138,6 @@ void set_layer_color(int layer) {
   }
 }
 
-bool rgb_matrix_indicators_user(void) __attribute__((unused));
 bool rgb_matrix_indicators_user(void) {
   if (rawhid_state.rgb_control) {
       return false;
@@ -173,7 +170,6 @@ bool rgb_matrix_indicators_user(void) {
 extern bool set_scrolling;
 extern bool navigator_turbo;
 extern bool navigator_aim;
-void pointing_device_init_user(void) __attribute__((unused));
 void pointing_device_init_user(void) {
     set_auto_mouse_enable(true);
 }
@@ -181,7 +177,6 @@ void pointing_device_init_user(void) {
 
 
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) __attribute__((unused));
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   // if (!process_achordion(keycode, record)) {
   //   return false;
@@ -189,7 +184,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case MAC_LOCK:
       HCS(0x19E);
-      return false;
+
     case DRAG_SCROLL:
       if (record->event.pressed) {
         set_scrolling = true;
@@ -202,6 +197,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         set_scrolling = !set_scrolling;
       }
       return false;
+    break;
   case NAVIGATOR_TURBO:
     if (record->event.pressed) {
       navigator_turbo = true;
