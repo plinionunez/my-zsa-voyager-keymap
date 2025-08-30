@@ -126,22 +126,30 @@ git checkout main
 git merge oryx --no-ff -m "Merge branch 'oryx' with keymap update from ZSA Oryx (${HASH_ID})"
 
 # Prepare QMK
+QMK_DIR_LOCAL="${WORKROOT}/qmk_firmware"
+BUILD_CACHE_DIR="${WORKROOT}/.qmk_build_cache"
+mkdir -p "$BUILD_CACHE_DIR"
+
 if [[ -z "$QMK_DIR" ]]; then
-  QMK_DIR="$TMPDIR_LOCAL/qmk_firmware"
-  echo "▶ Cloning zsa/qmk_firmware @ firmware${QMK_VERSION_MAJOR} ..."
-  if ! git clone --depth 1 --branch "firmware${QMK_VERSION_MAJOR}" https://github.com/zsa/qmk_firmware.git "$QMK_DIR" 2>/dev/null; then
-    git clone --depth 1 https://github.com/zsa/qmk_firmware.git "$QMK_DIR"
-    git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
-    git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
+  if [[ -d "$QMK_DIR_LOCAL/.git" ]]; then
+    echo "▶ Using local qmk_firmware submodule."
+    QMK_DIR="$QMK_DIR_LOCAL"
+  else
+    QMK_DIR="$TMPDIR_LOCAL/qmk_firmware"
+    echo "▶ Cloning zsa/qmk_firmware @ firmware${QMK_VERSION_MAJOR} ..."
+    if ! git clone --depth 1 --branch "firmware${QMK_VERSION_MAJOR}" https://github.com/zsa/qmk_firmware.git "$QMK_DIR" 2>/dev/null; then
+      git clone --depth 1 https://github.com/zsa/qmk_firmware.git "$QMK_DIR"
+      git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
+      git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
+    fi
   fi
-  git -C "$QMK_DIR" submodule update --init --recursive --depth=1
-else
-  echo "▶ Using existing QMK dir: $QMK_DIR"
-  [[ -d "$QMK_DIR/.git" ]] || die "QMK_DIR is not a git repo: $QMK_DIR"
-  git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
-  git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
-  git -C "$QMK_DIR" submodule update --init --recursive --depth=1
 fi
+
+echo "▶ Preparing QMK repository in $QMK_DIR ..."
+[[ -d "$QMK_DIR/.git" ]] || die "QMK_DIR is not a git repo: $QMK_DIR"
+git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
+git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
+git -C "$QMK_DIR" submodule update --init --recursive --depth=1
 
 if [[ "$QMK_VERSION_MAJOR" -ge 24 ]]; then
   KBD_DIR="$QMK_DIR/keyboards/zsa"
@@ -172,7 +180,9 @@ docker run --rm -v "$QMK_DIR:/src" "$DOCKER_IMAGE" /bin/sh -lc \
 echo "▶ Building: make ${MAKE_PREFIX}${GEOMETRY}:${LAYOUT_ID} (-j${HOST_CPUS})"
 docker run --rm \
   -v "$QMK_DIR:/src" \
+  -v "$BUILD_CACHE_DIR:/src/.build" \
   "$DOCKER_IMAGE" /bin/sh -lc "make -C /src -j${HOST_CPUS} ${MAKE_PREFIX}${GEOMETRY}:${LAYOUT_ID}"
+
 
 echo "▶ Locating artifact ..."
 NORMALIZED_GEOM="${GEOMETRY//\/\_}"
