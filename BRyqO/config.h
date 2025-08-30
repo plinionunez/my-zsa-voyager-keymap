@@ -8,7 +8,7 @@
 #define RGB_MATRIX_TIMEOUT 600000
 
 #define USB_SUSPEND_WAKEUP_DELAY 0
-#define SERIAL_NUMBER "BRyqO/YneVZw"
+#define SERIAL_NUMBER "BRyqO/3vw4nr"
 #define LAYER_STATE_8BIT
 #define HCS(report) host_consumer_send(record->event.pressed ? report : 0); return false
 
@@ -18,7 +18,7 @@
 #define AUTO_MOUSE_DEFAULT_LAYER 6
 #define AUTO_MOUSE_TIME 1000
 #define NAVIGATOR_SCROLL_INVERT
-#define NAVIGATOR_SCROLL_DIVIDER 32
+#define NAVIGATOR_SCROLL_DIVIDER 24 
 #define RGB_MATRIX_STARTUP_SPD 60
 
 #undef ENABLE_RGB_MATRIX_ALPHAS_MODS
