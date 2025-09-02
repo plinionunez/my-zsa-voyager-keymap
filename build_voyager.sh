@@ -151,9 +151,9 @@ QMK_DIR="$QMK_DIR_LOCAL"
 echo "▶ Preparing QMK repository in $QMK_DIR ..."
 # The .git check handles the case where it's a submodule (file) or a full repo (directory).
 [[ -e "$QMK_DIR/.git" ]] || die "QMK_DIR is not a git repo: $QMK_DIR"
-# git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
-# git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
-# git -C "$QMK_DIR" submodule update --init --recursive --depth=1
+git -C "$QMK_DIR" fetch origin "firmware${QMK_VERSION_MAJOR}" --depth 1
+git -C "$QMK_DIR" checkout -B "firmware${QMK_VERSION_MAJOR}" "FETCH_HEAD"
+git -C "$QMK_DIR" submodule update --init --recursive --depth=1
 
 if [[ "$QMK_VERSION_MAJOR" -ge 24 ]]; then
   KBD_DIR="$QMK_DIR/keyboards/zsa"
