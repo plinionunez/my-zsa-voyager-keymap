@@ -172,6 +172,15 @@ extern bool navigator_aim;
 void pointing_device_init_user(void) {
     set_auto_mouse_enable(true);
 }
+bool is_mouse_record_kb(uint16_t keycode, keyrecord_t* record) {
+  switch (keycode) {
+    case NAVIGATOR_INC_CPI ... NAVIGATOR_AIM:
+    case DRAG_SCROLL:
+    case TOGGLE_SCROLL:
+      return true;
+  }
+  return is_mouse_record_user(keycode, record);
+}
 
 
 
@@ -211,15 +220,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   case NAVIGATOR_INC_CPI:
     if (record->event.pressed) {
         pointing_device_set_cpi(1);
-        keyboard_config.navigator_cpi = pointing_device_get_cpi();
-        eeconfig_update_kb(keyboard_config.raw);
     }
     return false;
   case NAVIGATOR_DEC_CPI:
     if (record->event.pressed) {
         pointing_device_set_cpi(0);
-        keyboard_config.navigator_cpi = pointing_device_get_cpi();
-        eeconfig_update_kb(keyboard_config.raw);
     }
     return false;
     case RGB_SLD:
