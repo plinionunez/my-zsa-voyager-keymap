@@ -29,7 +29,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [1] = LAYOUT_voyager(
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TO(5),          
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, LGUI(KC_A),     LGUI(KC_S),     OSM(MOD_HYPR),                                  RGUI(KC_LEFT),  RALT(KC_LEFT),  RALT(KC_RIGHT), RGUI(KC_RIGHT), RALT(RSFT(KC_KP_PLUS)),TO(3),          
+    KC_TRANSPARENT, KC_TRANSPARENT, TO(6),          LGUI(KC_A),     LGUI(KC_S),     OSM(MOD_HYPR),                                  RGUI(KC_LEFT),  RALT(KC_LEFT),  RALT(KC_RIGHT), RGUI(KC_RIGHT), RALT(RSFT(KC_KP_PLUS)),TO(3),          
     CW_TOGG,        LGUI(KC_LBRC),  LGUI(KC_RBRC),  RGUI(RSFT(KC_LBRC)),RGUI(RSFT(KC_RBRC)),OSM(MOD_MEH),                                   KC_LEFT,        KC_DOWN,        KC_UP,          KC_RIGHT,       RALT(RSFT(KC_KP_MINUS)),TO(6),          
     LGUI(LSFT(KC_X)),LGUI(KC_Z),     LGUI(KC_X),     LGUI(KC_C),     LGUI(KC_V),     KC_LEFT_SHIFT,                                  RGUI(RSFT(KC_LBRC)),RGUI(RSFT(KC_RBRC)),LGUI(KC_LBRC),  LGUI(KC_RBRC),  KC_TRANSPARENT, LGUI(KC_ENTER), 
                                                     LCTL(KC_GRAVE), KC_TRANSPARENT,                                 LGUI(KC_GRAVE), LALT(KC_BSPC)
